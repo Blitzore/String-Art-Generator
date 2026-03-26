@@ -476,6 +476,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Gunakan 30fps agar lebih stabil di perangkat mobile dan memori tidak bocor
             const stream = artCanvas.captureStream(30); 
+            
+            // Perbaikan khusus untuk browser mobile (terutama pengguna iPhone/iOS Safari)
+            // dimana stream tidak mulai merekam kecuali frame di minta secara paksa:
+            const track = stream.getVideoTracks()[0];
+            if (track && typeof track.requestFrame === 'function') {
+                track.requestFrame();
+            }
+
             const format = document.getElementById('videoFormat').value;
             let options = {};
             
@@ -486,7 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (format === 'webm' && MediaRecorder.isTypeSupported('video/webm')) {
                 options = { mimeType: 'video/webm' };
             } else {
-                options = { mimeType: MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm' };
+                // Jangan paksaan opsi kalau tidak ada dukungan spesifik, biarkan default browser
+                options = MediaRecorder.isTypeSupported('video/webm') ? { mimeType: 'video/webm' } : {};
             }
             
             mediaRecorder = new MediaRecorder(stream, options);
@@ -499,20 +508,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             mediaRecorder.onstop = function() {
                 if (recordedChunks.length === 0) {
-                    alert("Gagal merekam video. Tolong pastikan browser Anda aktif saat proses rekaman.");
+                    alert("Gagal merekam video. Tolong coba ubah format video ke WebM lalu unduh kembali, atau pastikan browser Anda aktif saat proses rekaman.");
                     isRecording = false;
                     recordBtn.style.color = '';
                     setStatus('Ready');
                     return;
                 }
                 
-                const blob = new Blob(recordedChunks, { type: options.mimeType });
+                const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || options.mimeType || 'video/webm' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
                 
-                const ext = (options.mimeType && options.mimeType.includes('mp4')) ? 'mp4' : 'webm';
+                const mime = mediaRecorder.mimeType || options.mimeType || '';
+                const ext = mime.includes('mp4') ? 'mp4' : 'webm';
                 a.download = `string-art-video-${Date.now()}.${ext}`;
                 document.body.appendChild(a);
                 
@@ -542,9 +552,9 @@ document.addEventListener('DOMContentLoaded', () => {
             isRecording = true;
             recordedChunks = [];
             
-            // Menggunakan timeslice 1000ms untuk secara teratur mengambil chunk data,
-            // mencegah memori crash di mobile dan memastikan data video terkumpul.
-            mediaRecorder.start(1000);
+            // Jangan menggunakan timeslice (misal start(1000)) karena ini menyebabkan crash/blank chunks di banyak perangkat HP/iOS Safari.
+            // Biarkan browser mengumpulkan memori sepenuhnya untuk dirender di akhir (atau sampai batas memori).
+            mediaRecorder.start();
             
             // Restart animation to capture from beginning
             stopAnimation();
