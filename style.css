@@ -1,0 +1,220 @@
+:root {
+    --bg-color: #0f172a;
+    --surface-color: #1e293b;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #8b5cf6;
+    --border: #334155;
+    --canvas-bg: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 700px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+header { text-align: center; }
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+header p { color: var(--text-muted); font-size: 1.1rem; }
+
+main {
+    background: var(--surface-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.controls-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.input-group { display: flex; gap: 0.8rem; }
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+button svg { width: 20px; height: 20px; }
+
+.primary-btn {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.primary-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+}
+
+.secondary-btn {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+}
+
+.secondary-btn:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--text-muted);
+}
+
+.playback-controls {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(0,0,0,0.2);
+    padding: 0.5rem;
+    border-radius: 14px;
+}
+
+.icon-btn {
+    background: transparent;
+    color: var(--text-main);
+    padding: 0.6rem;
+    border-radius: 8px;
+}
+
+.icon-btn:hover { background: rgba(255,255,255,0.1); }
+
+.canvas-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: var(--canvas-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+}
+
+.placeholder-text {
+    color: #475569;
+    font-size: 1.1rem;
+    position: absolute;
+    pointer-events: none;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+canvas { display: block; }
+video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+.format-select {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.format-select option {
+    background: var(--surface-color);
+    color: var(--text-main);
+}
+
+#cameraControls {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.camera-capture-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid rgba(255,255,255,0.5);
+    padding: 0;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.camera-capture-btn:hover {
+    background: #e2e8f0;
+    transform: scale(1.05);
+}
+
+.status-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent));
+    transition: width 0.1s linear;
+}
+
+@media (max-width: 600px) {
+    .controls-panel { justify-content: center; }
+    .input-group { flex-direction: column; width: 100%; }
+    button { width: 100%; }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Art Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>String Art Generator</h1>
+            <p>Automatic, zero-configuration string art creator.</p>
+        </header>
+
+        <main>
+            <div class="controls-panel">
+                <div class="input-group">
+                    <button id="uploadBtn" class="primary-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                        Upload Image
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    
+                    <button id="cameraBtn" class="secondary-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        Camera
+                    </button>
+                </div>
+
+                <div class="playback-controls" id="playbackControls" style="display: none;">
+                    <button id="playPauseBtn" class="icon-btn" title="Play / Pause">
+                        <svg id="playIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <svg id="pauseIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    </button>
+                    <button id="restartBtn" class="icon-btn" title="Restart Animation">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                    <button id="skipBtn" class="icon-btn" title="Skip Animation">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                    </button>
+                    <button id="downloadBtn" class="icon-btn" title="Download Image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <div style="display:flex; align-items:center; gap:0.25rem;">
+                        <select id="videoFormat" class="format-select">
+                            <option value="mp4">MP4</option>
+                            <option value="webm">WebM</option>
+                        </select>
+                        <button id="recordBtn" class="icon-btn" title="Record Video">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-container" id="canvasContainer">
+                <div class="placeholder-text" id="placeholderText">Upload an image or use camera to start</div>
+                <video id="cameraVideo" autoplay playsinline style="display: none;"></video>
+                <div id="cameraControls" style="display: none;">
+                    <button id="captureBtn" class="camera-capture-btn"></button>
+                    <button id="cancelCameraBtn" class="secondary-btn" style="background: rgba(0,0,0,0.5); color: #fff; border:none; margin-top:10px;">Cancel</button>
+                </div>
+                <!-- Offscreen canvas for processing -->
+                <canvas id="originalCanvas" style="display: none;"></canvas>
+                <!-- Main canvas for drawing -->
+                <canvas id="artCanvas" style="display: none;"></canvas>
+            </div>
+            
+            <div class="status-panel">
+                <p id="statusText">Ready</p>
+                <div class="progress-bar-container" id="progressBarContainer" style="display: none;">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
