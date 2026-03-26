@@ -474,11 +474,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!linesHistory.length) return;
         
         try {
-            // White canvas background stream
-            const stream = artCanvas.captureStream(60); 
-            // Try different codecs for browser compatibility
+            // Gunakan 30fps agar lebih stabil di perangkat mobile dan memori tidak bocor
+            const stream = artCanvas.captureStream(30); 
             const format = document.getElementById('videoFormat').value;
             let options = {};
+            
             if (format === 'mp4' && MediaRecorder.isTypeSupported('video/mp4')) {
                 options = { mimeType: 'video/mp4' };
             } else if (format === 'webm' && MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
@@ -487,50 +487,75 @@ document.addEventListener('DOMContentLoaded', () => {
                 options = { mimeType: 'video/webm' };
             } else {
                 options = { mimeType: MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm' };
-                console.warn(`Preferred format might not be fully supported. Falling back to ${options.mimeType}`);
             }
             
             mediaRecorder = new MediaRecorder(stream, options);
             
             mediaRecorder.ondataavailable = function(e) {
-                if (e.data.size > 0) {
+                if (e.data && e.data.size > 0) {
                     recordedChunks.push(e.data);
                 }
             };
             
             mediaRecorder.onstop = function() {
-                const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+                if (recordedChunks.length === 0) {
+                    alert("Gagal merekam video. Tolong pastikan browser Anda aktif saat proses rekaman.");
+                    isRecording = false;
+                    recordBtn.style.color = '';
+                    setStatus('Ready');
+                    return;
+                }
+                
+                const blob = new Blob(recordedChunks, { type: options.mimeType });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
-                // extension handling
-                const ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
+                
+                const ext = (options.mimeType && options.mimeType.includes('mp4')) ? 'mp4' : 'webm';
                 a.download = `string-art-video-${Date.now()}.${ext}`;
                 document.body.appendChild(a);
-                a.click();
-                setTimeout(() => window.URL.revokeObjectURL(url), 100);
+                
+                // Gunakan timeout kecil untuk memastikan event click diproses dengan baik di mobile
+                setTimeout(() => {
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 200);
+                }, 100);
                 
                 recordedChunks = [];
                 isRecording = false;
                 recordBtn.style.color = '';
-                setStatus('Video Downloaded');
+                
+                // Restore UI
+                document.querySelectorAll('.icon-btn, .primary-btn, .secondary-btn').forEach(b => b.style.pointerEvents = 'auto');
+                setStatus('Video Downloaded Successfully!');
+                setTimeout(() => setStatus('Ready'), 3000);
             };
 
-            recordBtn.style.color = '#ef4444'; // Visual cue for recording
-            setStatus('Recording Video in background...');
+            // Nonaktifkan interaksi tombol lain selama recording agar tidak terpotong
+            document.querySelectorAll('.icon-btn:not(#recordBtn), .primary-btn, .secondary-btn').forEach(b => b.style.pointerEvents = 'none');
+            
+            recordBtn.style.color = '#ef4444'; 
             isRecording = true;
             recordedChunks = [];
             
-            mediaRecorder.start();
+            // Menggunakan timeslice 1000ms untuk secara teratur mengambil chunk data,
+            // mencegah memori crash di mobile dan memastikan data video terkumpul.
+            mediaRecorder.start(1000);
             
             // Restart animation to capture from beginning
             stopAnimation();
             currentLineIndex = 0;
             clearCanvas();
+            
+            setStatus('RECORDING... PLEASE DO NOT CLOSE OR MINIMIZE BROWSER!');
             startAnimation();
         } catch (err) {
-            alert("Video recording is not supported in your browser.");
+            alert("Video recording is not supported in your browser or an error occurred.");
+            isRecording = false;
         }
     }
 });
