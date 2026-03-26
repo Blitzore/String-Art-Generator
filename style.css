@@ -214,7 +214,68 @@ video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 }
 
 @media (max-width: 600px) {
-    .controls-panel { justify-content: center; }
-    .input-group { flex-direction: column; width: 100%; }
-    button { width: 100%; }
+    body {
+        align-items: flex-start;
+    }
+    .app-container {
+        padding: 0;
+        gap: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+    header {
+        padding: 1.5rem 1rem 1rem;
+        background: var(--surface-color);
+        border-bottom: 1px solid var(--border);
+    }
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.25rem;
+    }
+    header p {
+        font-size: 0.95rem;
+    }
+    main {
+        flex: 1;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        padding: 1rem;
+        justify-content: center;
+    }
+    .controls-panel { 
+        justify-content: center; 
+    }
+    .input-group { 
+        flex-direction: column; 
+        width: 100%; 
+    }
+    .input-group button { 
+        width: 100%; 
+        padding: 1rem;
+    }
+    .playback-controls {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .playback-controls button.icon-btn {
+        width: auto;
+        flex: 1;
+        padding: 0.8rem;
+    }
+    .playback-controls > div {
+        width: 100%;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+    .format-select {
+        flex: 1;
+        padding: 0.8rem;
+    }
+    .canvas-container {
+        border-radius: 12px;
+        margin: 0.5rem 0;
+    }
 }
